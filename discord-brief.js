@@ -36,7 +36,31 @@ console.log(`UK date: ${ukDate}`);
 console.log(`Brief type: ${briefType}`);
 
 // --------------------------------------------------
-// PROMPTS
+// GLOBAL OUTPUT RULES
+// --------------------------------------------------
+
+const outputRules = `
+
+STRICT OUTPUT RULES:
+
+- Write the final report in ENGLISH ONLY.
+- Never output Chinese, Japanese, Korean or other non-English source text.
+- Research foreign-language sources if useful, but translate the information into clear English.
+- DO NOT include URLs.
+- DO NOT include clickable links.
+- DO NOT include markdown source links.
+- DO NOT include a Sources or References section.
+- DO NOT reproduce web-search snippets.
+- DO NOT include source preview text.
+- Use research to establish facts, then write the Forex Fire report in your own concise English summary.
+- Maximum target length: approximately 650 words.
+- Keep each section short.
+- Avoid repeating the same market theme in multiple sections.
+- Prioritise information that can affect today's FX and Gold trading.
+`;
+
+// --------------------------------------------------
+// MORNING PROMPT
 // --------------------------------------------------
 
 const morningPrompt = `
@@ -50,9 +74,7 @@ You MUST use web search to research CURRENT information for TODAY before writing
 
 Create a concise Forex Fire Morning Brief designed for forex traders preparing for the London session.
 
-IMPORTANT RESEARCH REQUIREMENTS
-
-Search the web for:
+RESEARCH:
 
 - today's confirmed economic calendar
 - important overnight Asian-session developments
@@ -66,7 +88,7 @@ Search the web for:
 - geopolitical or risk sentiment developments
 - today's important UK, European, US and Canadian events
 
-Use credible current sources.
+Use credible current information.
 
 Do NOT invent:
 - economic releases
@@ -79,27 +101,26 @@ Do NOT invent:
 
 If something cannot be verified, leave it out.
 
-Keep the report practical and concise.
-
 FORMAT:
 
 🔥 FOREX FIRE MORNING BRIEF — ${ukDate} 🔥
 
 🌏 OVERNIGHT / ASIA RECAP
-Give a short factual summary of what happened overnight and during Asia that matters for FX and Gold.
+Give a very short factual summary of what happened overnight and during Asia that matters for FX and Gold.
 
 📅 TODAY'S KEY EVENTS
 List today's important scheduled economic events in UK time.
-Focus primarily on medium/high-impact events affecting:
+
+Focus primarily on:
 GBP, EUR, USD, CAD, JPY and Gold.
 
-Include:
+Format:
 UK TIME — EVENT — CURRENCY
 
 Only include events you can verify.
 
 💵 USD / MARKET SENTIMENT
-Give today's current USD tone and broader risk sentiment based on researched market information.
+Give today's current USD tone and broader risk sentiment.
 
 💷 GBP
 Give the current GBP theme.
@@ -112,15 +133,15 @@ Give the current JPY theme.
 
 🥇 GOLD — XAUUSD
 Give a concise current Gold overview.
-Do not invent price levels.
+Do not invent chart levels.
 
 🔥 LONDON MARKET WATCH
 Give 3 to 5 instruments worth watching during London.
 
 For each:
-PAIR — what makes it interesting today.
+PAIR — WHY IT MATTERS TODAY
 
-Do NOT give trade signals.
+Do not give trade signals.
 
 ⚡ QUICK BIAS
 USD:
@@ -132,13 +153,16 @@ GOLD:
 Use only:
 Bullish / Bearish / Mixed
 
-Finish with:
+Finish exactly with:
+
 Market analysis only — not financial advice.
 
-Keep the entire report concise enough for Discord.
-Avoid generic forex education.
-Do not tell traders to "check the calendar" — YOU are researching the calendar.
+${outputRules}
 `;
+
+// --------------------------------------------------
+// NY PROMPT
+// --------------------------------------------------
 
 const nyPrompt = `
 You are the Forex Fire market briefing assistant.
@@ -155,7 +179,7 @@ This is NOT a Morning Brief.
 
 RESEARCH TODAY'S ACTUAL MARKET FIRST.
 
-Search for:
+Research:
 
 - what happened in forex during today's London session
 - GBP performance during London
@@ -173,9 +197,7 @@ Search for:
 - major US session themes
 - current forex / Gold market news
 
-Use credible current sources.
-
-VERY IMPORTANT:
+Use credible current information.
 
 Do NOT invent:
 - prices
@@ -187,7 +209,7 @@ Do NOT invent:
 - news
 - scheduled events
 
-If a piece of information cannot be verified, omit it.
+If something cannot be verified, omit it.
 
 FORMAT:
 
@@ -195,67 +217,73 @@ FORMAT:
 ${ukDate}
 
 🇬🇧 LONDON SESSION RECAP
-Give a concise factual summary of what actually happened during London trading so far.
+Give a short factual summary of what actually happened during London trading.
 
-Focus on:
+Cover only the important developments involving:
 GBP
 EUR
 USD
 JPY
 Gold
 
-Mention clear relative strength/weakness only where supported by current information.
+Do not repeat the same explanation for several currencies.
 
 📰 NEWS + MARKET REACTION
-List the major economic releases, central-bank comments or headlines that affected today's London session.
+Include only the most important events that actually influenced today's market.
 
-For each relevant item:
-NEWS / DATA
-WHAT HAPPENED
-MARKET REACTION
+For each:
 
-Keep this brief.
+NEWS / DATA:
+WHAT HAPPENED:
+MARKET REACTION:
+
+Maximum 3 major items unless a fourth event is genuinely important.
 
 💧 LONDON LIQUIDITY / STRUCTURE
-Describe useful session observations only if they can reasonably be supported by current market reporting.
+Give a short practical overview.
 
-Examples:
-- London high/low pressure
-- USD directional pressure
-- risk-on/risk-off flows
-- Gold reaction
+Potential themes include:
+- London directional pressure
+- USD flows
+- risk-on / risk-off behaviour
+- Gold behaviour
 - major session reversals
 
-Do NOT invent chart levels.
+Do not invent chart price levels.
 
 🇺🇸 NEW YORK LOOK AHEAD
-Explain the key themes that matter as New York approaches.
+Explain the main themes that matter as New York approaches.
 
 Focus on:
 - USD
 - US yields
-- equities/risk sentiment
+- equities / risk sentiment
 - Gold
 - major FX themes
 
+Keep this short and forward-looking.
+
 📅 UPCOMING NEW YORK EVENTS
-List the important US and Canadian events STILL TO COME today.
+List only important US and Canadian events STILL TO COME today.
 
 Use UK times.
 
 Format:
+
 UK TIME — EVENT — CURRENCY — IMPACT
 
-Only include verified events.
+Do not list events that have already happened.
 
 🔥 NY MARKET WATCH
-Give 3 to 5 instruments genuinely worth watching for New York.
+Give a maximum of 4 instruments genuinely worth watching for New York.
 
 For each:
 
 PAIR / INSTRUMENT
 WHY IT MATTERS TODAY
 WHAT TO WATCH FOR
+
+Keep each one very short.
 
 Do NOT invent exact price levels.
 Do NOT give guaranteed trade signals.
@@ -267,35 +295,21 @@ EUR:
 JPY:
 GOLD:
 
-Use:
+Use only:
 Bullish / Bearish / Mixed
 
-Finish with:
+Finish exactly with:
+
 Market analysis only — not financial advice.
 
-The report must be:
-- factual
-- current
-- concise
-- useful
-- based on today's researched information
-- free from generic forex education
-
-Do not say you do not have access to live information.
-You have web search available and should use it.
+${outputRules}
 `;
 
 // --------------------------------------------------
 // CHOOSE PROMPT
 // --------------------------------------------------
 
-let prompt;
-
-if (briefType === "ny") {
-  prompt = nyPrompt;
-} else {
-  prompt = morningPrompt;
-}
+const prompt = briefType === "ny" ? nyPrompt : morningPrompt;
 
 // --------------------------------------------------
 // OPENAI RESPONSES API + WEB SEARCH
@@ -337,14 +351,12 @@ async function generateBrief(prompt) {
 
   const data = await response.json();
 
-  // Extract final text from Responses API output
   let text = "";
 
   if (typeof data.output_text === "string") {
     text = data.output_text.trim();
   }
 
-  // Fallback extraction if output_text is not included
   if (!text && Array.isArray(data.output)) {
     for (const item of data.output) {
       if (item.type === "message" && Array.isArray(item.content)) {
@@ -368,6 +380,84 @@ async function generateBrief(prompt) {
   }
 
   return text;
+}
+
+// --------------------------------------------------
+// DISCORD CLEAN-UP / SAFETY FILTER
+// --------------------------------------------------
+
+function containsCJK(text) {
+  return /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]/u.test(text);
+}
+
+function cleanForDiscord(text) {
+  let cleaned = text;
+
+  // Remove OpenAI-style inline citation markers if present.
+  cleaned = cleaned.replace(/]*/g, "");
+
+  // Turn markdown links into plain visible text.
+  cleaned = cleaned.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+    "$1"
+  );
+
+  // Remove any remaining bare URLs.
+  cleaned = cleaned.replace(/https?:\/\/\S+/g, "");
+
+  // Remove source-preview artefacts.
+  cleaned = cleaned
+    .split("\n")
+    .filter(line => {
+      const trimmed = line.trim();
+
+      if (/^(svg|image)$/i.test(trimmed)) {
+        return false;
+      }
+
+      // Remove any line containing CJK characters.
+      if (containsCJK(line)) {
+        return false;
+      }
+
+      return true;
+    })
+    .join("\n");
+
+  // Remove empty brackets left behind by removed citations.
+  cleaned = cleaned.replace(/\(\s*\)/g, "");
+
+  // Tidy excessive blank lines.
+  cleaned = cleaned.replace(/\n{3,}/g, "\n\n");
+
+  return cleaned.trim();
+}
+
+// --------------------------------------------------
+// LENGTH SAFETY
+// --------------------------------------------------
+
+function enforceReasonableLength(text, maxChars = 5000) {
+  if (text.length <= maxChars) {
+    return text;
+  }
+
+  console.warn(
+    `Report exceeded ${maxChars} characters. Trimming safely.`
+  );
+
+  let shortened = text.slice(0, maxChars);
+
+  const lastParagraph = shortened.lastIndexOf("\n\n");
+
+  if (lastParagraph > 3000) {
+    shortened = shortened.slice(0, lastParagraph);
+  }
+
+  shortened +=
+    "\n\nMarket analysis only — not financial advice.";
+
+  return shortened.trim();
 }
 
 // --------------------------------------------------
@@ -454,10 +544,28 @@ async function main() {
 
   console.log(`Generating: ${briefType}`);
 
-  const brief = await generateBrief(prompt);
+  const rawBrief = await generateBrief(prompt);
 
   console.log("OpenAI report generated.");
-  console.log(`Report length: ${brief.length} characters`);
+  console.log(`Raw report length: ${rawBrief.length} characters`);
+
+  let brief = cleanForDiscord(rawBrief);
+
+  brief = enforceReasonableLength(brief);
+
+  console.log(`Clean report length: ${brief.length} characters`);
+
+  if (containsCJK(brief)) {
+    throw new Error(
+      "Safety check failed: non-English CJK characters remain in report."
+    );
+  }
+
+  if (/https?:\/\//i.test(brief)) {
+    throw new Error(
+      "Safety check failed: URL remains in Discord report."
+    );
+  }
 
   await postToDiscord(brief);
 
