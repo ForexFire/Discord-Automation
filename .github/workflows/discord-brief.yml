@@ -2,8 +2,8 @@ name: Forex Fire Discord Briefs
 
 on:
   schedule:
-    # 08:00 UK while on BST (07:00 UTC)
-    - cron: "0 7 * * 1-5"
+    # 08:07 UK while on BST (07:07 UTC)
+    - cron: "7 7 * * 1-5"
 
     # 12:30 UK while on BST (11:30 UTC)
     - cron: "30 11 * * 1-5"
