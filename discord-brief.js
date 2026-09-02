@@ -46,7 +46,7 @@ let briefType;
 
 if (isManualRun) {
   briefType = "morning";
-} else if (ukTime === "08:00") {
+} else if (ukTime === "08:07") {
   briefType = "morning";
 } else if (ukTime === "12:30") {
   briefType = "ny";
@@ -65,7 +65,7 @@ const morningPrompt = `
 You are creating the Forex Fire weekday Morning Market Brief for a forex trading Discord community.
 
 Date: ${ukDate}
-Time: approximately 08:00 Europe/London.
+Time: approximately 08:07 Europe/London.
 
 Create a concise but useful professional market preparation brief focused on:
 
@@ -98,6 +98,14 @@ Keep it trader-friendly and easy to read in Discord.
 Do not invent exact prices, economic figures, news releases, market moves or events if you do not have verified live data.
 
 If current live market data is unavailable, clearly say that the brief is a structural/session preparation overview and avoid pretending that you have live prices.
+
+IMPORTANT:
+Do not offer to do more work.
+Do not ask the reader if they want anything else.
+Do not say "If you want, I can".
+Do not suggest pulling additional calendars, prices, levels or data.
+Do not include follow-up questions or service offers.
+The report must finish naturally with the market-analysis/not-financial-advice reminder.
 
 Use emojis sparingly and keep the formatting clean.
 `;
@@ -149,6 +157,14 @@ Do not invent exact live prices, economic figures, news releases or market moves
 
 If live market data is unavailable, clearly state that limitation and give a structural/session-based outlook rather than pretending to know current prices.
 
+IMPORTANT:
+Do not offer to do more work.
+Do not ask the reader if they want anything else.
+Do not say "If you want, I can".
+Do not suggest pulling additional calendars, prices, levels or data.
+Do not include follow-up questions or service offers.
+The report must finish naturally with the market-analysis/not-financial-advice reminder.
+
 Make the output easy to read in Discord and avoid unnecessary filler.
 `;
 
@@ -171,7 +187,7 @@ async function generateBrief(prompt) {
         {
           role: "system",
           content:
-            "You are the Forex Fire market briefing assistant. Be concise, structured and transparent about data limitations."
+            "You are the Forex Fire market briefing assistant. Be concise, structured and transparent about data limitations. Never offer additional work, never ask follow-up questions, and never end with phrases such as 'If you want, I can'. Finish only with the requested market analysis disclaimer."
         },
         {
           role: "user",
@@ -183,6 +199,7 @@ async function generateBrief(prompt) {
 
   if (!response.ok) {
     const errorText = await response.text();
+
     throw new Error(
       `OpenAI request failed: ${response.status} ${errorText}`
     );
