@@ -1,5 +1,6 @@
 const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 const openAiKey = process.env.OPENAI_API_KEY;
+const briefType = process.env.BRIEF_TYPE || "morning";
 
 if (!webhookUrl) {
   throw new Error("DISCORD_WEBHOOK_URL secret is missing.");
@@ -32,30 +33,7 @@ const ukTime = new Intl.DateTimeFormat("en-GB", {
 
 console.log(`UK time: ${ukTime}`);
 console.log(`UK date: ${ukDate}`);
-
-// --------------------------------------------------
-// DETERMINE WHICH BRIEF TO GENERATE
-// --------------------------------------------------
-
-// Manual GitHub run = generate Morning Brief for testing.
-// Scheduled runs choose according to UK time.
-
-const isManualRun = process.env.GITHUB_EVENT_NAME === "workflow_dispatch";
-
-let briefType;
-
-if (isManualRun) {
-  briefType = "morning";
-} else if (ukTime === "08:07") {
-  briefType = "morning";
-} else if (ukTime === "12:30") {
-  briefType = "ny";
-} else {
-  console.log(`No Forex Fire brief scheduled for ${ukTime}.`);
-  process.exit(0);
-}
-
-console.log(`Generating brief type: ${briefType}`);
+console.log(`Brief type: ${briefType}`);
 
 // --------------------------------------------------
 // PROMPTS
@@ -65,116 +43,128 @@ const morningPrompt = `
 You are creating the Forex Fire weekday Morning Market Brief for a forex trading Discord community.
 
 Date: ${ukDate}
-Time: approximately 08:07 Europe/London.
+Time: approximately 08:00 Europe/London.
 
-Create a concise but useful professional market preparation brief focused on:
+Create a concise, professional morning market-preparation brief for traders before the main London session.
 
-- EURUSD
-- GBPUSD
-- USDJPY
-- USDCHF
-- USDCAD
-- AUDUSD
-- NZDUSD
-- XAUUSD / Gold
+The report should include:
 
-The purpose is preparation before the main London session develops.
+1. Key economic news and events scheduled for today
+2. Overall USD tone / broad market sentiment
+3. Major currency themes
+4. Gold (XAUUSD) outlook
+5. Pairs showing the clearest potential relative strength vs weakness
+6. Important liquidity areas traders should be conscious of
+7. A short London-session market watch
 
-Include:
-
-1. FOREX FIRE MORNING BRIEF heading
-2. Today's date
-3. Key economic news/events to be aware of today
-4. Overall USD tone / market sentiment
-5. Major currency themes
-6. Gold outlook
-7. Pairs showing the clearest potential strength vs weakness
-8. Important liquidity areas traders should be conscious of
-9. A short "What I'm Watching" section
-10. Clear reminder that this is market analysis, not financial advice
-
-Keep it trader-friendly and easy to read in Discord.
-
-Do not invent exact prices, economic figures, news releases, market moves or events if you do not have verified live data.
-
-If current live market data is unavailable, clearly say that the brief is a structural/session preparation overview and avoid pretending that you have live prices.
-
-IMPORTANT:
-Do not offer to do more work.
-Do not ask the reader if they want anything else.
-Do not say "If you want, I can".
-Do not suggest pulling additional calendars, prices, levels or data.
-Do not include follow-up questions or service offers.
-The report must finish naturally with the market-analysis/not-financial-advice reminder.
-
-Use emojis sparingly and keep the formatting clean.
+Important:
+- Focus on what matters for today's trading day.
+- Do not invent exact prices, economic figures, news releases or market moves.
+- If live/current market data is unavailable, say so clearly.
+- Keep the report concise and suitable for Discord.
+- Do not offer additional work.
+- Do not ask follow-up questions.
+- Do not say "If you want, I can".
+- Finish naturally with a short market-analysis / not-financial-advice reminder.
 `;
 
 const nyPrompt = `
-You are creating the Forex Fire weekday London Session Overview and New York Session Look Ahead for a forex trading Discord community.
+You are creating the Forex Fire London Recap + New York Look Ahead for a forex trading Discord community.
 
 Date: ${ukDate}
 Time: approximately 12:30 Europe/London.
 
-Focus on:
+This is NOT a morning brief.
 
+Create a concise, current mid-session report focused on what has happened during the London session and what traders should watch into New York.
+
+Structure the report exactly around these areas:
+
+1. LONDON SESSION RECAP
+Summarise the most important moves seen during the London session so far.
+Focus on:
+- GBP
+- EUR
+- USD
+- JPY
+- Gold / XAUUSD
+- any standout relative strength or weakness
+- whether the market has been risk-on, risk-off or mixed
+
+2. NEWS + MARKET REACTION
+Summarise the important economic releases, central-bank comments or major headlines that affected European / London trading today.
+Where current verified data is available, explain the actual market reaction.
+If exact live figures are unavailable, do not invent them.
+
+3. LONDON LIQUIDITY / STRUCTURE
+Highlight useful structural observations such as:
+- previous session highs/lows being taken
+- London high / low behaviour
+- obvious liquidity sweeps
+- directional USD pressure
+- notable gold behaviour
+Keep this practical for Forex Fire traders.
+
+4. NEW YORK LOOK AHEAD
+Explain the main themes likely to matter as New York opens.
+State what could strengthen or weaken USD, equities, risk sentiment and Gold.
+Keep this focused on today's session rather than generic education.
+
+5. UPCOMING NEW YORK EVENTS
+List the important US and Canadian economic events still due today.
+Include UK times where reliably known.
+Mention which events could create the most volatility.
+Do not invent events or times.
+
+6. NY MARKET WATCH
+Give a short watchlist of the most relevant instruments for New York, such as:
 - EURUSD
 - GBPUSD
 - USDJPY
-- USDCHF
+- XAUUSD
 - USDCAD
-- AUDUSD
-- NZDUSD
-- XAUUSD / Gold
+Only include instruments that are genuinely relevant to today's conditions.
+For each, explain what condition or theme makes it worth watching.
+Do not give guaranteed trade calls or signals.
 
-Create the report in two clear parts.
+7. QUICK BIAS SNAPSHOT
+Finish with a very short summary:
+- USD: bullish / bearish / mixed
+- GBP: bullish / bearish / mixed
+- EUR: bullish / bearish / mixed
+- JPY: bullish / bearish / mixed
+- Gold: bullish / bearish / mixed
 
-PART 1 — LONDON SESSION OVERVIEW
-
-Summarise the London session so far:
-- general risk tone
-- USD behaviour
-- which major currencies appear strongest and weakest
-- notable directional behaviour
-- liquidity themes
-- whether the session has been trending, ranging or mixed
-- Gold behaviour
-
-PART 2 — NEW YORK LOOK AHEAD
-
-Cover:
-- important US / Canadian economic events still ahead
-- USD risks for New York
-- major pairs worth watching
-- Gold outlook into New York
-- potential continuation versus reversal themes
-- liquidity areas traders should be aware of
-- a concise "What I'm Watching Into NY" section
-
-Finish with a clear reminder that this is market analysis, not financial advice.
-
-Do not invent exact live prices, economic figures, news releases or market moves if you do not have verified live data.
-
-If live market data is unavailable, clearly state that limitation and give a structural/session-based outlook rather than pretending to know current prices.
-
-IMPORTANT:
-Do not offer to do more work.
-Do not ask the reader if they want anything else.
-Do not say "If you want, I can".
-Do not suggest pulling additional calendars, prices, levels or data.
-Do not include follow-up questions or service offers.
-The report must finish naturally with the market-analysis/not-financial-advice reminder.
-
-Make the output easy to read in Discord and avoid unnecessary filler.
+Important:
+- This must read like a real 12:30 London recap + New York preparation report.
+- Do not repeat morning-brief wording.
+- Do not fill space with generic forex education.
+- Be concise.
+- Be specific where current verified information is available.
+- If live/current data is unavailable, clearly state the limitation instead of inventing facts.
+- Do not offer additional work.
+- Do not ask follow-up questions.
+- Do not say "If you want, I can".
+- Finish naturally with a short market-analysis / not-financial-advice reminder.
 `;
+
+// --------------------------------------------------
+// CHOOSE PROMPT
+// --------------------------------------------------
+
+let prompt;
+
+if (briefType === "ny") {
+  prompt = nyPrompt;
+} else {
+  prompt = morningPrompt;
+}
 
 // --------------------------------------------------
 // OPENAI
 // --------------------------------------------------
 
 async function generateBrief(prompt) {
-  console.log("Calling OpenAI...");
-
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -182,12 +172,13 @@ async function generateBrief(prompt) {
       Authorization: `Bearer ${openAiKey}`
     },
     body: JSON.stringify({
-      model: "gpt-5-mini",
+      model: "gpt-4.1-mini",
+      temperature: 0.3,
       messages: [
         {
           role: "system",
           content:
-            "You are the Forex Fire market briefing assistant. Be concise, structured and transparent about data limitations. Never offer additional work, never ask follow-up questions, and never end with phrases such as 'If you want, I can'. Finish only with the requested market analysis disclaimer."
+            "You are the Forex Fire market briefing assistant. Be concise, structured and transparent about data limitations. Never offer additional work, never ask follow-up questions, and never end with phrases such as 'If you want, I can'."
         },
         {
           role: "user",
@@ -199,7 +190,6 @@ async function generateBrief(prompt) {
 
   if (!response.ok) {
     const errorText = await response.text();
-
     throw new Error(
       `OpenAI request failed: ${response.status} ${errorText}`
     );
@@ -207,56 +197,37 @@ async function generateBrief(prompt) {
 
   const data = await response.json();
 
-  const text = data?.choices?.[0]?.message?.content;
+  const text =
+    data?.choices?.[0]?.message?.content?.trim();
 
   if (!text) {
-    throw new Error("OpenAI returned no briefing text.");
+    throw new Error("OpenAI returned an empty response.");
   }
 
-  console.log("OpenAI brief generated successfully.");
-
-  return text.trim();
+  return text;
 }
 
 // --------------------------------------------------
-// DISCORD
+// DISCORD MESSAGE SPLITTING
 // --------------------------------------------------
-
-async function sendDiscordChunk(content) {
-  const response = await fetch(webhookUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      content
-    })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-
-    throw new Error(
-      `Discord webhook failed: ${response.status} ${errorText}`
-    );
-  }
-}
 
 function splitForDiscord(text, maxLength = 1900) {
   const chunks = [];
-
-  let remaining = text;
+  let remaining = text.trim();
 
   while (remaining.length > maxLength) {
-    let splitIndex = remaining.lastIndexOf("\n", maxLength);
+    let splitAt = remaining.lastIndexOf("\n", maxLength);
 
-    if (splitIndex < 500) {
-      splitIndex = maxLength;
+    if (splitAt < 500) {
+      splitAt = remaining.lastIndexOf(" ", maxLength);
     }
 
-    chunks.push(remaining.slice(0, splitIndex).trim());
+    if (splitAt < 500) {
+      splitAt = maxLength;
+    }
 
-    remaining = remaining.slice(splitIndex).trim();
+    chunks.push(remaining.slice(0, splitAt).trim());
+    remaining = remaining.slice(splitAt).trim();
   }
 
   if (remaining.length > 0) {
@@ -266,25 +237,37 @@ function splitForDiscord(text, maxLength = 1900) {
   return chunks;
 }
 
-async function sendDiscordBrief(title, brief) {
-  const fullMessage = `${title}\n\n${brief}`;
+// --------------------------------------------------
+// POST TO DISCORD
+// --------------------------------------------------
 
-  const chunks = splitForDiscord(fullMessage);
+async function postToDiscord(text) {
+  const parts = splitForDiscord(text);
 
-  console.log(`Sending ${chunks.length} Discord message part(s).`);
+  for (let i = 0; i < parts.length; i++) {
+    const prefix =
+      parts.length > 1
+        ? `**Part ${i + 1}/${parts.length}**\n\n`
+        : "";
 
-  for (let i = 0; i < chunks.length; i++) {
-    let content = chunks[i];
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        content: prefix + parts[i]
+      })
+    });
 
-    if (chunks.length > 1) {
-      content =
-        `**Part ${i + 1}/${chunks.length}**\n\n` +
-        content;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Discord webhook failed: ${response.status} ${errorText}`
+      );
     }
 
-    await sendDiscordChunk(content);
-
-    console.log(`Discord part ${i + 1}/${chunks.length} sent.`);
+    await new Promise(resolve => setTimeout(resolve, 700));
   }
 }
 
@@ -292,20 +275,19 @@ async function sendDiscordBrief(title, brief) {
 // RUN
 // --------------------------------------------------
 
-const selectedPrompt =
-  briefType === "morning"
-    ? morningPrompt
-    : nyPrompt;
+async function main() {
+  console.log(`Generating ${briefType} brief...`);
 
-const title =
-  briefType === "morning"
-    ? `🔥 **FOREX FIRE MORNING BRIEF — ${ukDate}** 🔥`
-    : `🔥 **FOREX FIRE LONDON OVERVIEW + NEW YORK LOOK AHEAD — ${ukDate}** 🔥`;
+  const brief = await generateBrief(prompt);
 
-const brief = await generateBrief(selectedPrompt);
+  console.log("Brief generated.");
 
-await sendDiscordBrief(title, brief);
+  await postToDiscord(brief);
 
-console.log(
-  `Forex Fire ${briefType} Discord brief completed successfully.`
-);
+  console.log("Discord post complete.");
+}
+
+main().catch(error => {
+  console.error(error);
+  process.exit(1);
+});
