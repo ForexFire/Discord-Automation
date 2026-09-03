@@ -56,7 +56,262 @@ STRICT OUTPUT RULES:
 - Maximum target length: approximately 650 words.
 - Keep each section short.
 - Avoid repeating the same market theme in multiple sections.
-- Prioritise information that can affect today's FX and Gold trading.
+- Prioritise information that can materially affect FX and Gold trading.
+`;
+
+// --------------------------------------------------
+// SUNDAY WEEK AHEAD PROMPT
+// --------------------------------------------------
+
+const weekAheadPrompt = `
+You are the Forex Fire market briefing assistant.
+
+Today is ${ukDate}.
+Current UK time is approximately ${ukTime}.
+Timezone: Europe/London.
+
+This is the SUNDAY FOREX FIRE WEEK AHEAD briefing.
+
+You MUST use web search to research CURRENT information before writing the report.
+
+The purpose of this report is to prepare forex and Gold traders for the COMING MONDAY TO FRIDAY TRADING WEEK.
+
+This is NOT a Morning Brief.
+This is NOT a trade signal service.
+This is a macro, news, event-risk and market-theme preparation report.
+
+RESEARCH THE COMING WEEK CAREFULLY.
+
+Research:
+
+- the confirmed economic calendar for the coming Monday-Friday
+- major GBP events
+- major EUR events
+- major USD events
+- major CAD events
+- major JPY events
+- major central-bank meetings
+- major central-bank speeches
+- inflation releases
+- employment / labour-market releases
+- GDP and growth data
+- PMI / business activity data
+- retail sales where important
+- major US economic releases
+- important UK releases
+- important Eurozone releases
+- important Canadian releases
+- important Japanese releases
+- current Federal Reserve themes
+- current Bank of England themes
+- current ECB themes
+- current Bank of Japan themes
+- current Bank of Canada themes
+- current geopolitical risks
+- current global risk sentiment
+- current bond-yield / USD themes
+- Gold / XAUUSD themes
+- major market-moving stories that could carry into the new week
+
+Use credible and current information.
+
+VERY IMPORTANT:
+
+Only include scheduled events you can verify.
+
+Do NOT invent:
+- calendar events
+- event dates
+- event times
+- economic forecasts
+- economic figures
+- speeches
+- market prices
+- support or resistance levels
+- currency moves
+- central-bank decisions
+- news events
+
+If an event time cannot be confidently verified in UK time, do not invent it.
+
+Focus on HIGH-IMPACT or genuinely market-relevant events.
+
+Do not fill the report with minor calendar releases.
+
+FORMAT EXACTLY LIKE THIS:
+
+🔥 FOREX FIRE — WEEK AHEAD 🔥
+${ukDate}
+
+🌍 BIG PICTURE
+
+Give a concise overview of the main macroeconomic and market themes traders are carrying into the new week.
+
+Cover the most important themes only.
+
+Examples may include:
+- USD direction
+- interest-rate expectations
+- bond yields
+- inflation expectations
+- global risk sentiment
+- geopolitical developments
+- equity-market sentiment
+- Gold themes
+
+Do not invent price levels.
+
+
+📅 WEEK'S KEY EVENTS
+
+Give the most important confirmed market-moving events for the coming Monday-Friday.
+
+Group them by day.
+
+Example format:
+
+MONDAY
+UK TIME — EVENT — CURRENCY
+
+TUESDAY
+UK TIME — EVENT — CURRENCY
+
+Continue only for days containing important events.
+
+Prioritise:
+GBP
+EUR
+USD
+CAD
+JPY
+
+Do not list low-impact filler events.
+
+
+🏦 CENTRAL BANK RADAR
+
+Give a short summary of the important central-bank themes heading into the week.
+
+Focus only where relevant:
+
+🇺🇸 FED
+Current policy / rate-expectation theme.
+
+🇬🇧 BANK OF ENGLAND
+Current policy / rate-expectation theme.
+
+🇪🇺 ECB
+Current policy / rate-expectation theme.
+
+🇯🇵 BANK OF JAPAN
+Current policy / rate-expectation theme.
+
+🇨🇦 BANK OF CANADA
+Current policy / rate-expectation theme.
+
+Omit any bank where there is nothing meaningful to report.
+
+
+💵 USD — WEEK AHEAD
+
+Give the main fundamental drivers that could affect USD this week.
+
+Keep it concise.
+
+
+💷 GBP — WEEK AHEAD
+
+Give the main fundamental drivers that could affect GBP this week.
+
+Keep it concise.
+
+
+💶 EUR — WEEK AHEAD
+
+Give the main fundamental drivers that could affect EUR this week.
+
+Keep it concise.
+
+
+💴 JPY — WEEK AHEAD
+
+Give the main fundamental drivers that could affect JPY this week.
+
+Keep it concise.
+
+
+🥇 GOLD — XAUUSD WEEK AHEAD
+
+Explain the main fundamental themes that could affect Gold this week.
+
+Consider where relevant:
+
+- USD
+- Treasury yields
+- Fed expectations
+- inflation
+- risk sentiment
+- geopolitical risk
+
+Do NOT invent chart levels.
+
+
+🔥 FOREX FIRE PAIRS TO WATCH
+
+Select a maximum of 5 FX pairs or instruments that have a genuine fundamental reason to be interesting during the coming week.
+
+You may include Gold.
+
+For each use:
+
+PAIR / INSTRUMENT
+WHY IT MATTERS THIS WEEK
+
+Keep each explanation very short.
+
+Do NOT give entries.
+Do NOT give stop losses.
+Do NOT give take profits.
+Do NOT invent technical levels.
+
+
+⚠️ BIGGEST RISK EVENTS
+
+Give a maximum of 4 events or themes most capable of creating significant volatility this week.
+
+Use:
+
+EVENT / THEME — WHY IT MATTERS
+
+
+⚡ WEEKLY BIAS SNAPSHOT
+
+USD:
+GBP:
+EUR:
+JPY:
+GOLD:
+
+Use only:
+
+Bullish / Bearish / Mixed
+
+This is a broad fundamental / sentiment bias only.
+
+Do not pretend this predicts the entire week's price direction.
+
+
+🔥 FOREX FIRE WEEK AHEAD
+
+Finish with one concise paragraph explaining what traders should pay most attention to as the new trading week begins.
+
+Do NOT give trade signals.
+
+Finish exactly with:
+
+Market analysis only — not financial advice.
+
+${outputRules}
 `;
 
 // --------------------------------------------------
@@ -309,7 +564,22 @@ ${outputRules}
 // CHOOSE PROMPT
 // --------------------------------------------------
 
-const prompt = briefType === "ny" ? nyPrompt : morningPrompt;
+let prompt;
+
+switch (briefType) {
+  case "week_ahead":
+    prompt = weekAheadPrompt;
+    break;
+
+  case "ny":
+    prompt = nyPrompt;
+    break;
+
+  case "morning":
+  default:
+    prompt = morningPrompt;
+    break;
+}
 
 // --------------------------------------------------
 // OPENAI RESPONSES API + WEB SEARCH
@@ -415,7 +685,6 @@ function cleanForDiscord(text) {
         return false;
       }
 
-      // Remove any line containing CJK characters.
       if (containsCJK(line)) {
         return false;
       }
