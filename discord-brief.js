@@ -31,8 +31,19 @@ const ukTime = new Intl.DateTimeFormat("en-GB", {
   hour12: false
 }).format(now);
 
+const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+const ukTomorrowDate = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/London",
+  weekday: "long",
+  day: "2-digit",
+  month: "long",
+  year: "numeric"
+}).format(tomorrow);
+
 console.log(`UK time: ${ukTime}`);
 console.log(`UK date: ${ukDate}`);
+console.log(`Tomorrow: ${ukTomorrowDate}`);
 console.log(`Brief type: ${briefType}`);
 
 // --------------------------------------------------
@@ -57,6 +68,7 @@ STRICT OUTPUT RULES:
 - Keep each section short.
 - Avoid repeating the same market theme in multiple sections.
 - Prioritise information that can materially affect FX and Gold trading.
+- Never invent facts, economic data, event times, market prices or market reactions.
 `;
 
 // --------------------------------------------------
@@ -138,7 +150,7 @@ Focus on HIGH-IMPACT or genuinely market-relevant events.
 
 Do not fill the report with minor calendar releases.
 
-FORMAT EXACTLY LIKE THIS:
+FORMAT:
 
 🔥 FOREX FIRE — WEEK AHEAD 🔥
 ${ukDate}
@@ -161,14 +173,13 @@ Examples may include:
 
 Do not invent price levels.
 
-
 📅 WEEK'S KEY EVENTS
 
 Give the most important confirmed market-moving events for the coming Monday-Friday.
 
 Group them by day.
 
-Example format:
+Format:
 
 MONDAY
 UK TIME — EVENT — CURRENCY
@@ -186,7 +197,6 @@ CAD
 JPY
 
 Do not list low-impact filler events.
-
 
 🏦 CENTRAL BANK RADAR
 
@@ -211,41 +221,27 @@ Current policy / rate-expectation theme.
 
 Omit any bank where there is nothing meaningful to report.
 
-
 💵 USD — WEEK AHEAD
 
 Give the main fundamental drivers that could affect USD this week.
-
-Keep it concise.
-
 
 💷 GBP — WEEK AHEAD
 
 Give the main fundamental drivers that could affect GBP this week.
 
-Keep it concise.
-
-
 💶 EUR — WEEK AHEAD
 
 Give the main fundamental drivers that could affect EUR this week.
 
-Keep it concise.
-
-
 💴 JPY — WEEK AHEAD
 
 Give the main fundamental drivers that could affect JPY this week.
-
-Keep it concise.
-
 
 🥇 GOLD — XAUUSD WEEK AHEAD
 
 Explain the main fundamental themes that could affect Gold this week.
 
 Consider where relevant:
-
 - USD
 - Treasury yields
 - Fed expectations
@@ -254,7 +250,6 @@ Consider where relevant:
 - geopolitical risk
 
 Do NOT invent chart levels.
-
 
 🔥 FOREX FIRE PAIRS TO WATCH
 
@@ -274,7 +269,6 @@ Do NOT give stop losses.
 Do NOT give take profits.
 Do NOT invent technical levels.
 
-
 ⚠️ BIGGEST RISK EVENTS
 
 Give a maximum of 4 events or themes most capable of creating significant volatility this week.
@@ -282,7 +276,6 @@ Give a maximum of 4 events or themes most capable of creating significant volati
 Use:
 
 EVENT / THEME — WHY IT MATTERS
-
 
 ⚡ WEEKLY BIAS SNAPSHOT
 
@@ -299,7 +292,6 @@ Bullish / Bearish / Mixed
 This is a broad fundamental / sentiment bias only.
 
 Do not pretend this predicts the entire week's price direction.
-
 
 🔥 FOREX FIRE WEEK AHEAD
 
@@ -416,7 +408,7 @@ ${outputRules}
 `;
 
 // --------------------------------------------------
-// NY PROMPT
+// LONDON RECAP + NEW YORK LOOK AHEAD PROMPT
 // --------------------------------------------------
 
 const nyPrompt = `
@@ -561,6 +553,469 @@ ${outputRules}
 `;
 
 // --------------------------------------------------
+// TOMORROW'S RADAR PROMPT
+// --------------------------------------------------
+
+const radarPrompt = `
+You are the Forex Fire market briefing assistant.
+
+Today is ${ukDate}.
+Current UK time is approximately ${ukTime}.
+Timezone: Europe/London.
+
+Tomorrow is ${ukTomorrowDate}.
+
+This is the FOREX FIRE TOMORROW'S RADAR briefing.
+
+It is designed to be generated during the UK evening from MONDAY TO THURSDAY.
+
+You MUST use web search to research CURRENT information before writing this report.
+
+The purpose is to prepare Forex Fire traders for TOMORROW'S trading day before the overnight and Asian sessions begin.
+
+This is NOT a recap-only report.
+This is NOT a trade signal service.
+
+It should briefly acknowledge today's important market developments where they affect tomorrow, but the main focus MUST be tomorrow.
+
+RESEARCH CAREFULLY:
+
+- tomorrow's confirmed economic calendar
+- tomorrow's high-impact and important market events
+- GBP events tomorrow
+- EUR events tomorrow
+- USD events tomorrow
+- CAD events tomorrow
+- JPY events tomorrow
+- AUD and NZD events if important during the Asian session
+- central-bank meetings or decisions tomorrow
+- central-bank speeches tomorrow
+- inflation releases
+- employment releases
+- GDP / growth releases
+- PMI releases
+- retail sales or other major data
+- current Fed expectations
+- current Bank of England expectations
+- current ECB expectations
+- current Bank of Japan expectations
+- current Bank of Canada expectations
+- current market reaction from today that may carry into tomorrow
+- current USD tone
+- current bond-yield themes
+- current global risk sentiment
+- geopolitical developments that may affect tomorrow
+- Gold / XAUUSD themes
+- overnight and Asian-session risks
+
+VERY IMPORTANT:
+
+Tomorrow means ${ukTomorrowDate} in the Europe/London timezone.
+
+Do NOT accidentally list events from today.
+
+Only include events you can verify as taking place TOMORROW.
+
+Use UK times for all scheduled events.
+
+Do NOT invent:
+- calendar events
+- event times
+- economic figures
+- forecasts
+- speeches
+- prices
+- support/resistance levels
+- currency moves
+- market reactions
+- central-bank decisions
+- news
+
+If a scheduled event cannot be verified, omit it.
+
+Prioritise genuinely important events.
+
+FORMAT:
+
+🔭 FOREX FIRE — TOMORROW'S RADAR 🔭
+Preparing for ${ukTomorrowDate}
+
+🌙 TONIGHT'S MARKET HANDOVER
+
+Give a very concise summary of the most important themes being carried from today's trading into tonight and tomorrow.
+
+Focus on what may still matter when Asia opens.
+
+Maximum 2 short paragraphs.
+
+🌏 OVERNIGHT / ASIA RADAR
+
+Explain what traders should be aware of during the overnight and Asian sessions.
+
+Include AUD or NZD only if genuinely relevant.
+
+Pay particular attention to:
+- JPY
+- risk sentiment
+- China-related developments if market-relevant
+- major Asian data
+- scheduled central-bank events
+- Gold sensitivity to overnight USD / yield moves
+
+Keep this practical and concise.
+
+📅 TOMORROW'S KEY EVENTS
+
+List only tomorrow's important confirmed economic events.
+
+Use UK time.
+
+Format:
+
+UK TIME — EVENT — CURRENCY — IMPACT
+
+Prioritise:
+GBP
+EUR
+USD
+CAD
+JPY
+
+Include AUD or NZD only when a genuinely important event is scheduled.
+
+Do not include minor filler events.
+
+If there are no major confirmed events for a currency, do not invent one.
+
+🏦 CENTRAL BANK WATCH
+
+Give a very short forward-looking summary of any central-bank theme that could influence tomorrow.
+
+Only include relevant banks.
+
+Potential banks:
+🇺🇸 Fed
+🇬🇧 Bank of England
+🇪🇺 ECB
+🇯🇵 Bank of Japan
+🇨🇦 Bank of Canada
+
+Focus on:
+- rate expectations
+- confirmed speeches
+- scheduled decisions
+- policy-sensitive data
+
+💵 USD — TOMORROW
+
+Explain the principal USD theme heading into tomorrow.
+
+Mention US yields or rate expectations only when relevant.
+
+💷 GBP — TOMORROW
+
+Explain the principal GBP theme heading into tomorrow.
+
+💶 EUR — TOMORROW
+
+Explain the principal EUR theme heading into tomorrow.
+
+💴 JPY — TOMORROW
+
+Explain the principal JPY theme heading into tomorrow.
+
+🥇 GOLD — XAUUSD TOMORROW
+
+Explain what could influence Gold tomorrow.
+
+Consider where relevant:
+- USD
+- US Treasury yields
+- Fed expectations
+- geopolitical risk
+- risk sentiment
+- scheduled US data
+
+Do not invent price levels.
+
+🔥 TOMORROW'S FOREX FIRE RADAR
+
+Select a maximum of 5 FX pairs or instruments genuinely worth having on the radar tomorrow.
+
+You may include Gold.
+
+For each:
+
+PAIR / INSTRUMENT
+WHY IT IS ON THE RADAR
+MAIN CATALYST TO WATCH
+
+Keep each concise.
+
+Do NOT give:
+- entries
+- stop losses
+- take profits
+- guaranteed direction
+- invented price levels
+
+⚠️ TOMORROW'S VOLATILITY WATCH
+
+Give a maximum of 4 important events or themes that could create volatility tomorrow.
+
+Format:
+
+EVENT / THEME — WHY IT MATTERS
+
+⚡ TOMORROW'S BIAS SNAPSHOT
+
+USD:
+GBP:
+EUR:
+JPY:
+GOLD:
+
+Use only:
+
+Bullish / Bearish / Mixed
+
+This is a broad fundamental / sentiment bias heading into tomorrow, not a guaranteed trading direction.
+
+🔥 FOREX FIRE — BEFORE TOMORROW
+
+Finish with one concise paragraph telling traders what deserves the most attention before tomorrow's London session.
+
+Do NOT give trade signals.
+
+Finish exactly with:
+
+Market analysis only — not financial advice.
+
+${outputRules}
+`;
+
+// --------------------------------------------------
+// WEEKLY WRAP PROMPT
+// --------------------------------------------------
+
+const weeklyWrapPrompt = `
+You are the Forex Fire market briefing assistant.
+
+Today is ${ukDate}.
+Current UK time is approximately ${ukTime}.
+Timezone: Europe/London.
+
+This is the FOREX FIRE WEEKLY WRAP.
+
+This report is designed to be generated on FRIDAY EVENING after the main London and New York trading activity of the week.
+
+You MUST use web search to research what ACTUALLY HAPPENED during the CURRENT MONDAY-TO-FRIDAY TRADING WEEK.
+
+This is a review of the completed trading week.
+
+It is NOT the Sunday Week Ahead.
+It is NOT a Tomorrow's Radar report.
+It is NOT a trade signal service.
+
+RESEARCH THIS WEEK CAREFULLY.
+
+Research:
+
+- the major economic releases from this week
+- actual economic figures where verified
+- market reactions to major data
+- Federal Reserve developments
+- Bank of England developments
+- ECB developments
+- Bank of Japan developments
+- Bank of Canada developments
+- major central-bank speeches
+- changes in interest-rate expectations
+- US Treasury yield themes
+- USD performance and themes
+- GBP performance and themes
+- EUR performance and themes
+- JPY performance and themes
+- CAD themes where important
+- Gold / XAUUSD performance and drivers
+- global risk sentiment
+- equity-market sentiment where relevant
+- geopolitical developments
+- the biggest market-moving stories of the week
+- major surprises versus expectations
+- themes that persisted across several sessions
+
+Use credible current sources.
+
+VERY IMPORTANT:
+
+The report must describe the CURRENT WEEK THAT HAS JUST BEEN TRADED.
+
+Do NOT drift into a full forecast for next week.
+
+Do NOT invent:
+- economic data
+- prices
+- percentage moves
+- central-bank comments
+- speeches
+- market reactions
+- news events
+- currency performance
+- support/resistance levels
+
+Only state exact figures or market moves when they can be verified.
+
+If something cannot be verified, omit it.
+
+FORMAT:
+
+📊 FOREX FIRE — WEEKLY WRAP 📊
+Week ending ${ukDate}
+
+🔥 THE WEEK IN ONE VIEW
+
+Give a concise summary of the dominant market story of the week.
+
+Explain the main theme that connected FX, rates, risk sentiment and Gold where relevant.
+
+Maximum 2 short paragraphs.
+
+📅 BIGGEST DATA & NEWS EVENTS
+
+Select a maximum of 5 genuinely important events from this week.
+
+For each:
+
+EVENT:
+WHAT HAPPENED:
+MARKET IMPACT:
+
+Include verified figures only when useful.
+
+Do not fill this section with minor events.
+
+🏦 CENTRAL BANK WRAP
+
+Summarise the most important central-bank developments of the week.
+
+Only include banks where something meaningful happened.
+
+Potential banks:
+
+🇺🇸 FED
+🇬🇧 BANK OF ENGLAND
+🇪🇺 ECB
+🇯🇵 BANK OF JAPAN
+🇨🇦 BANK OF CANADA
+
+Explain how policy expectations changed, if they changed.
+
+💵 USD — WEEKLY WRAP
+
+Summarise what drove USD during the week.
+
+State whether the broad fundamental tone finished:
+Bullish / Bearish / Mixed
+
+Explain why briefly.
+
+💷 GBP — WEEKLY WRAP
+
+Summarise what drove GBP during the week.
+
+State whether the broad fundamental tone finished:
+Bullish / Bearish / Mixed
+
+💶 EUR — WEEKLY WRAP
+
+Summarise what drove EUR during the week.
+
+State whether the broad fundamental tone finished:
+Bullish / Bearish / Mixed
+
+💴 JPY — WEEKLY WRAP
+
+Summarise what drove JPY during the week.
+
+State whether the broad fundamental tone finished:
+Bullish / Bearish / Mixed
+
+🥇 GOLD — XAUUSD WEEKLY WRAP
+
+Explain the most important drivers of Gold this week.
+
+Consider:
+- USD
+- US yields
+- Fed expectations
+- inflation
+- geopolitical risk
+- risk sentiment
+
+Do not invent technical levels.
+
+🔥 MARKETS THAT STOOD OUT
+
+Select a maximum of 5 FX pairs or instruments that were particularly important this week.
+
+For each:
+
+PAIR / INSTRUMENT
+WHAT DROVE IT
+
+This is a factual review, not a trade recommendation.
+
+⚡ BIGGEST LESSONS FROM THE WEEK
+
+Give 3 concise observations traders can take from this week's market behaviour.
+
+Focus on:
+- data reaction
+- central-bank sensitivity
+- USD flows
+- risk sentiment
+- Gold behaviour
+- expectations versus actual outcomes
+
+Do NOT give motivational filler.
+
+📊 WEEKLY BIAS CLOSE
+
+USD:
+GBP:
+EUR:
+JPY:
+GOLD:
+
+Use only:
+
+Bullish / Bearish / Mixed
+
+This should describe how the fundamental / sentiment picture finishes the trading week.
+
+🔭 WHAT CARRIES INTO NEXT WEEK?
+
+Give ONLY a very short preview of unresolved themes likely to remain relevant when markets reopen next week.
+
+Maximum 3 items.
+
+Do not turn this into the Sunday Week Ahead report.
+
+🔥 FOREX FIRE WEEKLY WRAP
+
+Finish with one concise closing paragraph summarising the week's key takeaway.
+
+Do NOT give trade signals.
+
+Finish exactly with:
+
+Market analysis only — not financial advice.
+
+${outputRules}
+`;
+
+// --------------------------------------------------
 // CHOOSE PROMPT
 // --------------------------------------------------
 
@@ -575,8 +1030,22 @@ switch (briefType) {
     prompt = nyPrompt;
     break;
 
+  case "radar":
+    prompt = radarPrompt;
+    break;
+
+  case "weekly_wrap":
+    prompt = weeklyWrapPrompt;
+    break;
+
   case "morning":
+    prompt = morningPrompt;
+    break;
+
   default:
+    console.warn(
+      `Unknown BRIEF_TYPE "${briefType}". Falling back to morning.`
+    );
     prompt = morningPrompt;
     break;
 }
@@ -663,7 +1132,10 @@ function containsCJK(text) {
 function cleanForDiscord(text) {
   let cleaned = text;
 
-  // Remove OpenAI-style inline citation markers if present.
+  // Remove OpenAI-style citation markers.
+  cleaned = cleaned.replace(/]*/g, "");
+
+  // Remove other OpenAI-style source markers if present.
   cleaned = cleaned.replace(/]*/g, "");
 
   // Turn markdown links into plain visible text.
@@ -672,16 +1144,20 @@ function cleanForDiscord(text) {
     "$1"
   );
 
-  // Remove any remaining bare URLs.
+  // Remove remaining bare URLs.
   cleaned = cleaned.replace(/https?:\/\/\S+/g, "");
 
-  // Remove source-preview artefacts.
+  // Remove source-preview artefacts and non-English CJK lines.
   cleaned = cleaned
     .split("\n")
     .filter(line => {
       const trimmed = line.trim();
 
       if (/^(svg|image)$/i.test(trimmed)) {
+        return false;
+      }
+
+      if (/^(sources|references):?$/i.test(trimmed)) {
         return false;
       }
 
@@ -695,6 +1171,12 @@ function cleanForDiscord(text) {
 
   // Remove empty brackets left behind by removed citations.
   cleaned = cleaned.replace(/\(\s*\)/g, "");
+
+  // Remove trailing spaces.
+  cleaned = cleaned
+    .split("\n")
+    .map(line => line.trimEnd())
+    .join("\n");
 
   // Tidy excessive blank lines.
   cleaned = cleaned.replace(/\n{3,}/g, "\n\n");
@@ -723,8 +1205,11 @@ function enforceReasonableLength(text, maxChars = 5000) {
     shortened = shortened.slice(0, lastParagraph);
   }
 
-  shortened +=
-    "\n\nMarket analysis only — not financial advice.";
+  // Avoid duplicating the disclaimer if it is already present.
+  if (!shortened.includes("Market analysis only — not financial advice.")) {
+    shortened +=
+      "\n\nMarket analysis only — not financial advice.";
+  }
 
   return shortened.trim();
 }
@@ -753,6 +1238,7 @@ function splitForDiscord(text, maxLength = 1850) {
     }
 
     chunks.push(remaining.slice(0, splitAt).trim());
+
     remaining = remaining.slice(splitAt).trim();
   }
 
@@ -796,7 +1282,9 @@ async function postToDiscord(text) {
       );
     }
 
-    console.log(`Posted Discord part ${i + 1}/${parts.length}`);
+    console.log(
+      `Posted Discord part ${i + 1}/${parts.length}`
+    );
 
     await new Promise(resolve => setTimeout(resolve, 800));
   }
@@ -816,13 +1304,17 @@ async function main() {
   const rawBrief = await generateBrief(prompt);
 
   console.log("OpenAI report generated.");
-  console.log(`Raw report length: ${rawBrief.length} characters`);
+  console.log(
+    `Raw report length: ${rawBrief.length} characters`
+  );
 
   let brief = cleanForDiscord(rawBrief);
 
   brief = enforceReasonableLength(brief);
 
-  console.log(`Clean report length: ${brief.length} characters`);
+  console.log(
+    `Clean report length: ${brief.length} characters`
+  );
 
   if (containsCJK(brief)) {
     throw new Error(
