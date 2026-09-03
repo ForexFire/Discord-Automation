@@ -1,15 +1,6 @@
 name: Forex Fire Discord Briefs
 
 on:
-  schedule:
-    # Morning Brief — 08:30 Europe/London
-    - cron: "30 8 * * 1-5"
-      timezone: "Europe/London"
-
-    # London Recap + NY Look Ahead — 12:30 Europe/London
-    - cron: "30 12 * * 1-5"
-      timezone: "Europe/London"
-
   workflow_dispatch:
     inputs:
       brief_type:
@@ -38,19 +29,7 @@ jobs:
         id: brief
         shell: bash
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "type=${{ inputs.brief_type }}" >> "$GITHUB_OUTPUT"
-
-          elif [[ "${{ github.event.schedule }}" == "30 8 * * 1-5" ]]; then
-            echo "type=morning" >> "$GITHUB_OUTPUT"
-
-          elif [[ "${{ github.event.schedule }}" == "30 12 * * 1-5" ]]; then
-            echo "type=ny" >> "$GITHUB_OUTPUT"
-
-          else
-            echo "Unknown trigger."
-            exit 1
-          fi
+          echo "type=${{ inputs.brief_type }}" >> "$GITHUB_OUTPUT"
 
       - name: Run Forex Fire Discord Brief
         env:
