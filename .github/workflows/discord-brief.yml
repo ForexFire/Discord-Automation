@@ -1,19 +1,6 @@
 name: Forex Fire Discord Briefs
 
 on:
-  schedule:
-    # 🔥 Sunday Week Ahead — 19:00 Europe/London
-    - cron: "0 19 * * 0"
-      timezone: "Europe/London"
-
-    # ☕ Morning Brief — 08:07 Europe/London
-    - cron: "7 8 * * 1-5"
-      timezone: "Europe/London"
-
-    # 🇬🇧 London Recap + 🇺🇸 NY Look Ahead — 12:30 Europe/London
-    - cron: "30 12 * * 1-5"
-      timezone: "Europe/London"
-
   workflow_dispatch:
     inputs:
       brief_type:
@@ -25,6 +12,8 @@ on:
           - week_ahead
           - morning
           - ny
+          - radar
+          - weekly_wrap
 
 jobs:
   forex-fire-brief:
@@ -43,21 +32,7 @@ jobs:
         id: brief
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "type=${{ inputs.brief_type }}" >> "$GITHUB_OUTPUT"
-
-          elif [ "${{ github.event.schedule }}" = "0 19 * * 0" ]; then
-            echo "type=week_ahead" >> "$GITHUB_OUTPUT"
-
-          elif [ "${{ github.event.schedule }}" = "7 8 * * 1-5" ]; then
-            echo "type=morning" >> "$GITHUB_OUTPUT"
-
-          elif [ "${{ github.event.schedule }}" = "30 12 * * 1-5" ]; then
-            echo "type=ny" >> "$GITHUB_OUTPUT"
-
-          else
-            echo "type=morning" >> "$GITHUB_OUTPUT"
-          fi
+          echo "type=${{ inputs.brief_type }}" >> "$GITHUB_OUTPUT"
 
       - name: Run Forex Fire Discord Brief
         env:
