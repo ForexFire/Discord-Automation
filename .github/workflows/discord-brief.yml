@@ -2,8 +2,8 @@ name: Forex Fire Discord Briefs
 
 on:
   schedule:
-    # Morning Brief — 08:07 Europe/London
-    - cron: "7 8 * * 1-5"
+    # Morning Brief — 08:30 Europe/London
+    - cron: "30 8 * * 1-5"
       timezone: "Europe/London"
 
     # London Recap + NY Look Ahead — 12:30 Europe/London
@@ -41,7 +41,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "type=${{ inputs.brief_type }}" >> "$GITHUB_OUTPUT"
 
-          elif [[ "${{ github.event.schedule }}" == "7 8 * * 1-5" ]]; then
+          elif [[ "${{ github.event.schedule }}" == "30 8 * * 1-5" ]]; then
             echo "type=morning" >> "$GITHUB_OUTPUT"
 
           elif [[ "${{ github.event.schedule }}" == "30 12 * * 1-5" ]]; then
